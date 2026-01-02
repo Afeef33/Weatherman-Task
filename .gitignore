@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+.idea/
+WeathermenTask/weather_files/
+*.DS_Store
+../README.md
