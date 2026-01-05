@@ -1,6 +1,7 @@
 import os
 from datetime import date
 
+
 class WeatherReading:
     def __init__(self, date_str, max_temp, min_temp, max_hum, mean_hum):
         self.date = self._parse_date(date_str)
@@ -14,6 +15,7 @@ class WeatherReading:
     def _parse_date(self, date_str):
         if not date_str:
             return None
+
         parts = date_str.split('-')
 
         if len(parts) != 3:
@@ -27,14 +29,17 @@ class WeatherReading:
 
         if month < 1 or month > 12:
             return None
+
         if day < 1 or day > 31:
             return None
 
         return date(year, month, day)
 
+
     def _to_int(self, value):
         if value and value.strip():
             return int(value)
+
         return None
 
 
@@ -43,9 +48,12 @@ class FileParser:
         weather_records = []
         if not os.path.exists(file_path):
             print(f"Error: File not found -> {file_path}")
+
             return weather_records
+
         if not os.path.isfile(file_path):
             print(f"Error: Path is not a file -> {file_path}")
+
             return weather_records
 
         with open(file_path, 'r') as file:
@@ -55,6 +63,7 @@ class FileParser:
                 columns = line.strip().split(',')
                 if not columns or len(columns) < 9:
                     continue
+
                 reading = WeatherReading(
                     date_str=columns[0],
                     max_temp=columns[1],
@@ -62,7 +71,9 @@ class FileParser:
                     max_hum=columns[7],
                     mean_hum=columns[8]
                 )
+
                 if reading.date:
                     weather_records.append(reading)
 
         return weather_records
+

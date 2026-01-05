@@ -1,15 +1,11 @@
 import sys
-from controllers import WeatherController
-from parser import FileParser
-from analyzer import WeatherAnalyzer
-from reports import ReportGenerator
+
+from parsers import FileParser
+from weather_cores import WeatherController, WeatherAnalyzer, ReportGenerator
 from utils import get_year_files,print_usage
 
-def main():
-    if len(sys.argv) < 4:
-        print_usage()
-        return
 
+def main():
     folder_path = sys.argv[1]
 
     parser = FileParser()
@@ -54,8 +50,15 @@ def main():
         for file_path in year_files:
             weather_reports.extend(parser.parse_file(file_path))
 
-        action_func(year=year, month=month, readings=weather_reports)
+        action_func(year=year, month=month, weather_data=weather_reports)
 
 
 if __name__ == "__main__":
-    main()
+    if "--help" in sys.argv:
+        print_usage()
+        sys.exit()
+
+    if len(sys.argv) < 4:
+        print("Invalid arguments.")
+        print_usage()
+        sys.exit()
