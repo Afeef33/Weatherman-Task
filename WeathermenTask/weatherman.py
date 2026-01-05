@@ -7,14 +7,14 @@ from utils import get_year_files, print_usage, parse_file
 def main():
     folder_path = sys.argv[1]
 
-    reporter = WeatherReportGenerator()
-    controller = WeatherManager(reporter)
+    report_generator = WeatherReportGenerator()
+    weather_manager = WeatherManager(report_generator)
 
     actions = {
-        '-e': controller.get_yearly_summary,
-        '-a': controller.get_monthly_avg,
-        '-c': controller.get_daily_temp_bars,
-        '-b': controller.get_temp_range_bar
+        '-e': weather_manager.get_yearly_summary,
+        '-a': weather_manager.get_monthly_avg,
+        '-c': weather_manager.get_daily_temp_bars,
+        '-b': weather_manager.get_temp_range_bar
     }
 
     # Loop for arguments

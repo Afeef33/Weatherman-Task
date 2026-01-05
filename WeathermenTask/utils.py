@@ -36,10 +36,10 @@ def parse_file(file_path):
 
     return weather_records
 
-def print_extreme(label, record, attr_name, unit):
-    if record:
-        value = getattr(record, attr_name)
-        date_str = record.date.strftime('%B %d')
+def print_extreme(label, weather_record, attr_name, unit):
+    if weather_record:
+        value = getattr(weather_record, attr_name)
+        date_str = weather_record.date.strftime('%B %d')
         print(f"{label}: {value}{unit} on {date_str}")
     else:
         print(f"{label}: Data not available")
