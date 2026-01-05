@@ -1,6 +1,6 @@
 import os
 
-from weather_data import WeatherRecord
+from WeathermenTask.weather_data import WeatherRecord
 
 
 def parse_file(file_path):

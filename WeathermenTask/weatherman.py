@@ -1,7 +1,7 @@
 import sys
 
-from weather_core import WeatherManager, WeatherReportGenerator
-from utils import get_year_files, print_usage, parse_file
+from WeathermenTask.cores import WeatherManager, WeatherReportGenerator
+from WeathermenTask.utils import get_year_files, print_usage, parse_file
 
 
 def main():

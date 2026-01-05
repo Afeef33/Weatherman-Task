@@ -1,7 +1,7 @@
-from utils import calculate_avg, filter_by_month, find_extreme, print_extreme
+from WeathermenTask.utils import  calculate_avg, filter_by_month, find_extreme, print_extreme
 
 
-# Responsible for all visual output, including text reports and charts.
+# Responsible for displaying outputs.
 class WeatherReportGenerator:
     # ANSI Color Codes
     RED = '\033[91m'
