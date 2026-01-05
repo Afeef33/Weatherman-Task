@@ -40,3 +40,4 @@ class WeatherRecord:
             return int(value)
 
         return
+

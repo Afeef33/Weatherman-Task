@@ -117,3 +117,4 @@ class WeatherManager:
 
         if monthly_data:
             self.report_generator.draw_temp_range_chart(year, month, monthly_data)
+
