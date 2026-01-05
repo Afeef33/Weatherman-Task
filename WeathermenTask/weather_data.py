@@ -16,7 +16,7 @@ class WeatherRecord:
         if not date_str:
             return
 
-        parts = date_str.split('-')
+        parts = date_str.split("-")
 
         if len(parts) != 3:
             return

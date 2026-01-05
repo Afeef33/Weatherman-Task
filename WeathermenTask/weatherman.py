@@ -1,7 +1,7 @@
 import sys
 
-from WeathermenTask.cores import WeatherManager, WeatherReportGenerator
-from WeathermenTask.utils import get_year_files, print_usage, parse_file
+from cores import WeatherManager, WeatherReportGenerator
+from utils import get_year_files, print_usage, parse_file
 
 
 def main():
@@ -11,10 +11,10 @@ def main():
     weather_manager = WeatherManager(report_generator)
 
     actions = {
-        '-e': weather_manager.get_yearly_summary,
-        '-a': weather_manager.get_monthly_avg,
-        '-c': weather_manager.get_daily_temp_bars,
-        '-b': weather_manager.get_temp_range_bar
+        "-e": weather_manager.get_yearly_summary,
+        "-a": weather_manager.get_monthly_avg,
+        "-c": weather_manager.get_daily_temp_bars,
+        "-b": weather_manager.get_temp_range_bar,
     }
 
     # Loop for arguments
@@ -32,8 +32,8 @@ def main():
             print(f"Error: Unknown flag '{flag}'")
             continue
 
-        if '/' in date_arg:
-            year, month = date_arg.split('/')
+        if "/" in date_arg:
+            year, month = date_arg.split("/")
         else:
             year = date_arg
             month = None

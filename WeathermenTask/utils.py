@@ -1,6 +1,6 @@
 import os
 
-from WeathermenTask.weather_data import WeatherRecord
+from weather_data import WeatherRecord
 
 
 def parse_file(file_path):
@@ -15,11 +15,11 @@ def parse_file(file_path):
 
         return weather_records
 
-    with open(file_path, 'r') as file:
+    with open(file_path, "r") as file:
         # skip first header line
         next(file)
         for line in file:
-            columns = line.strip().split(',')
+            columns = line.strip().split(",")
             if not columns or len(columns) < 9:
                 continue
 
@@ -28,7 +28,7 @@ def parse_file(file_path):
                 max_temp=columns[1],
                 min_temp=columns[3],
                 max_hum=columns[7],
-                mean_hum=columns[8]
+                mean_hum=columns[8],
             )
 
             if reading.date:
@@ -36,13 +36,15 @@ def parse_file(file_path):
 
     return weather_records
 
+
 def print_extreme(label, weather_record, attr_name, unit):
     if weather_record:
         value = getattr(weather_record, attr_name)
-        date_str = weather_record.date.strftime('%B %d')
+        date_str = weather_record.date.strftime("%B %d")
         print(f"{label}: {value}{unit} on {date_str}")
     else:
         print(f"{label}: Data not available")
+
 
 def find_extreme(weather_records, attr_name, find_max=True):
     valid_records = [r for r in weather_records if getattr(r, attr_name) is not None]
@@ -57,7 +59,9 @@ def find_extreme(weather_records, attr_name, find_max=True):
 
 
 def calculate_avg(readings, attr_name):
-    values = [getattr(r, attr_name) for r in readings if getattr(r, attr_name) is not None]
+    values = [
+        getattr(r, attr_name) for r in readings if getattr(r, attr_name) is not None
+    ]
     if not values:
         return 0
 
@@ -84,7 +88,8 @@ def filter_by_month(readings, month):
 
 
 def print_usage():
-    print("""
+    print(
+        """
     Weatherman CLI Tool - Usage Guide
     ---------------------------------
     python weatherman.py <path> <flag> <date>
@@ -100,4 +105,5 @@ def print_usage():
       python weatherman.py weather_files -a 2004/3
       python weatherman.py weather_files -c 2004/3
       python weatherman.py weather_files -b 2004/3
-    """)
+    """
+    )
