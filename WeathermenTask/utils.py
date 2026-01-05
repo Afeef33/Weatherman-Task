@@ -1,6 +1,6 @@
 import os
 
-from weather_core import WeatherRecord
+from weather_data import WeatherRecord
 
 
 def parse_file(file_path):
