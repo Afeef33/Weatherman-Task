@@ -1,24 +1,51 @@
+from datetime import date
+
 from utils import calculate_avg, filter_by_month, find_extreme, print_extreme
 
 
-class WeatherAnalyzer:
-    def get_yearly_stats(self, weather_records):
-        max_temp = find_extreme(weather_records, 'max_temp', find_max=True)
-        min_temp = find_extreme(weather_records, 'min_temp', find_max=False)
-        max_humid = find_extreme(weather_records, 'max_humidity', find_max=True)
+# A data structure to hold a single day's weather metrics.
+class WeatherRecord:
+    def __init__(self, date_str, max_temp, min_temp, max_hum, mean_hum):
+        self.date = self._parse_date(date_str)
+        # Temperatures
+        self.max_temp = self._to_int(max_temp)
+        self.min_temp = self._to_int(min_temp)
+        # Humidity
+        self.max_humidity = self._to_int(max_hum)
+        self.mean_humidity = self._to_int(mean_hum)
 
-        return max_temp, min_temp, max_humid
+    def _parse_date(self, date_str):
+        if not date_str:
+            return
+
+        parts = date_str.split('-')
+
+        if len(parts) != 3:
+            return
+
+        year_str, month_str, day_str = parts
+        if not (year_str.isdigit() and month_str.isdigit() and day_str.isdigit()):
+            return
+
+        year, month, day = int(year_str), int(month_str), int(day_str)
+
+        if month < 1 or month > 12:
+            return
+
+        if day < 1 or day > 31:
+            return
+
+        return date(year, month, day)
+
+    def _to_int(self, value):
+        if value and value.strip():
+            return int(value)
+
+        return
 
 
-    def get_monthly_averages(self, weather_records):
-        avg_max_temp = calculate_avg(weather_records, 'max_temp')
-        avg_min_temp = calculate_avg(weather_records, 'min_temp')
-        avg_humid = calculate_avg(weather_records, 'mean_humidity')
-
-        return avg_max_temp, avg_min_temp, avg_humid
-
-
-class ReportGenerator:
+# Responsible for all visual output, including text reports and charts.
+class WeatherReportGenerator:
     # ANSI Color Codes
     RED = '\033[91m'
     BLUE = '\033[94m'
@@ -53,23 +80,22 @@ class ReportGenerator:
         for reading in readings:
             if reading.max_temp is None or reading.min_temp is None:
                 continue
-            day_number = reading.date.day
 
             blue_pluses = reading.min_temp
             red_pluses = reading.max_temp - reading.min_temp
 
             print(
-                f"{day_number:02d} "
+                f"{reading.date.day:02d} "
                 f"{self.BLUE}{'+' * blue_pluses}"
                 f"{self.RED}{'+' * red_pluses}{self.RESET} "
                 f"{reading.min_temp}C - {reading.max_temp}C"
             )
 
 
-class WeatherController:
-    def __init__(self, analyzer, reporter):
-        self.analyzer = analyzer
-        self.reporter = reporter
+# Processes weather data and triggers the correct report display.
+class WeatherManager:
+    def __init__(self, report_generator):
+        self.report_generator = report_generator
 
     def _get_monthly_data(self, year, month, weather_data, flag_name):
         if not month:
@@ -86,18 +112,31 @@ class WeatherController:
 
         return monthly_data
 
+    def _calculate_yearly_stats(self, weather_records):
+        max_temp = find_extreme(weather_records, 'max_temp', find_max=True)
+        min_temp = find_extreme(weather_records, 'min_temp', find_max=False)
+        max_humid = find_extreme(weather_records, 'max_humidity', find_max=True)
 
-    def run_yearly_summary(self, year, month, weather_data):
-        high, low, humid = self.analyzer.get_yearly_stats(weather_data)
-        self.reporter.print_yearly_summary(year, high, low, humid)
+        return max_temp, min_temp, max_humid
 
-    def run_monthly_avg(self, year, month, weather_data):
+    def _calculate_monthly_averages(self, weather_records):
+        avg_max_temp = calculate_avg(weather_records, 'max_temp')
+        avg_min_temp = calculate_avg(weather_records, 'min_temp')
+        avg_humid = calculate_avg(weather_records, 'mean_humidity')
+
+        return avg_max_temp, avg_min_temp, avg_humid
+
+    def get_yearly_summary(self, year, month, weather_data):
+        high, low, humid = self._calculate_yearly_stats(weather_data)
+        self.report_generator.print_yearly_summary(year, high, low, humid)
+
+    def get_monthly_avg(self, year, month, weather_data):
         monthly_data = self._get_monthly_data(
             year, month, weather_data, "-a flag"
         )
 
         if monthly_data:
-            avg_max, avg_min, avg_hum = self.analyzer.get_monthly_averages(monthly_data)
+            avg_max, avg_min, avg_hum = self._calculate_monthly_averages(monthly_data)
 
             stats={
                 "avg_max" : avg_max,
@@ -105,20 +144,20 @@ class WeatherController:
                 "avg_humid" : avg_hum
             }
 
-            self.reporter.print_monthly_average(year, month, stats)
+            self.report_generator.print_monthly_average(year, month, stats)
 
-    def run_daily_temp_bars(self, year, month, weather_data):
+    def get_daily_temp_bars(self, year, month, weather_data):
         monthly_data = self._get_monthly_data(
             year, month, weather_data, "-c flag"
         )
 
         if monthly_data:
-            self.reporter.draw_daily_temp_bars(year, month, monthly_data)
+            self.report_generator.draw_daily_temp_bars(year, month, monthly_data)
 
-    def run_temp_range_bar(self, year, month, weather_data):
+    def get_temp_range_bar(self, year, month, weather_data):
         monthly_data = self._get_monthly_data(
             year, month, weather_data, "-b flag"
         )
 
         if monthly_data:
-            self.reporter.draw_temp_range_chart(year, month, monthly_data)
+            self.report_generator.draw_temp_range_chart(year, month, monthly_data)

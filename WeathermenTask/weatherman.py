@@ -1,23 +1,20 @@
 import sys
 
-from parsers import FileParser
-from weather_cores import WeatherController, WeatherAnalyzer, ReportGenerator
-from utils import get_year_files,print_usage
+from weather_core import WeatherManager, WeatherReportGenerator
+from utils import get_year_files, print_usage, parse_file
 
 
 def main():
     folder_path = sys.argv[1]
 
-    parser = FileParser()
-    analyzer = WeatherAnalyzer()
-    reporter = ReportGenerator()
-    controller = WeatherController(analyzer, reporter)
+    reporter = WeatherReportGenerator()
+    controller = WeatherManager(reporter)
 
     actions = {
-        '-e': controller.run_yearly_summary,
-        '-a': controller.run_monthly_avg,
-        '-c': controller.run_daily_temp_bars,
-        '-b': controller.run_temp_range_bar
+        '-e': controller.get_yearly_summary,
+        '-a': controller.get_monthly_avg,
+        '-c': controller.get_daily_temp_bars,
+        '-b': controller.get_temp_range_bar
     }
 
     # Loop for arguments
@@ -48,7 +45,7 @@ def main():
 
         weather_reports = []
         for file_path in year_files:
-            weather_reports.extend(parser.parse_file(file_path))
+            weather_reports.extend(parse_file(file_path))
 
         action_func(year=year, month=month, weather_data=weather_reports)
 
@@ -62,3 +59,5 @@ if __name__ == "__main__":
         print("Invalid arguments.")
         print_usage()
         sys.exit()
+
+    main()

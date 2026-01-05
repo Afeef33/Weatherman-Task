@@ -1,5 +1,40 @@
 import os
 
+from weather_core import WeatherRecord
+
+
+def parse_file(file_path):
+    weather_records = []
+    if not os.path.exists(file_path):
+        print(f"Error: File not found -> {file_path}")
+
+        return weather_records
+
+    if not os.path.isfile(file_path):
+        print(f"Error: Path is not a file -> {file_path}")
+
+        return weather_records
+
+    with open(file_path, 'r') as file:
+        # skip first header line
+        next(file)
+        for line in file:
+            columns = line.strip().split(',')
+            if not columns or len(columns) < 9:
+                continue
+
+            reading = WeatherRecord(
+                date_str=columns[0],
+                max_temp=columns[1],
+                min_temp=columns[3],
+                max_hum=columns[7],
+                mean_hum=columns[8]
+            )
+
+            if reading.date:
+                weather_records.append(reading)
+
+    return weather_records
 
 def print_extreme(label, record, attr_name, unit):
     if record:
